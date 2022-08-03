@@ -35,11 +35,14 @@ class StoreVersion {
   /// before publishng a new version.
   final String? forceAppVersion;
 
+  http.Client? client;
+
   StoreVersion({
     this.androidId,
     this.iOSId,
     this.iOSAppStoreCountry,
     this.forceAppVersion,
+    this.client
   });
 
   /// This checks the version status, then displays a platform-specific alert
@@ -56,6 +59,7 @@ class StoreVersion {
   /// way.
   Future<VersionStatus?> getVersionStatus() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    client ??= http.Client();
     if (Platform.isIOS) {
       return _getiOSStoreVersion(packageInfo);
     } else if (Platform.isAndroid) {
@@ -81,7 +85,7 @@ class StoreVersion {
       parameters.addAll({"country": iOSAppStoreCountry!});
     }
     var uri = Uri.https("itunes.apple.com", "/lookup", parameters);
-    final response = await http.get(uri);
+    final response = await client!.get(uri);
     if (response.statusCode != 200) {
       debugPrint('Failed to query iOS App Store');
       return null;
@@ -107,7 +111,7 @@ class StoreVersion {
     final id = androidId ?? packageInfo.packageName;
     final uri =
     Uri.https("play.google.com", "/store/apps/details", {"id": "$id", "hl": "en"});
-    final response = await http.get(uri);
+    final response = await client!.get(uri);
     if (response.statusCode != 200) {
       debugPrint('Can\'t find an app in the Play Store with the id: $id');
       return null;

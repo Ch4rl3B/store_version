@@ -35,30 +35,9 @@ class _MyHomePageState extends State<MyHomePage> {
     const simpleBehavior = true;
 
     if (simpleBehavior) {
-      basicStatusCheck(newVersion);
+      basicStatusCheck(newVersion, context);
     } else {
-      advancedStatusCheck(newVersion);
-    }
-  }
-
-  basicStatusCheck(StoreVersion newVersion) {
-    newVersion.showAlertIfNecessary(context: context);
-  }
-
-  advancedStatusCheck(StoreVersion newVersion) async {
-    final status = await newVersion.getVersionStatus();
-    if (status != null) {
-      debugPrint(status.releaseNotes);
-      debugPrint(status.appStoreLink);
-      debugPrint(status.localVersion);
-      debugPrint(status.storeVersion);
-      debugPrint(status.canUpdate.toString());
-      newVersion.showUpdateDialog(
-        context: context,
-        versionStatus: status,
-        dialogTitle: 'Custom Title',
-        dialogText: 'Custom Text',
-      );
+      advancedStatusCheck(newVersion, context);
     }
   }
 
@@ -69,5 +48,28 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text("Example App"),
       ),
     );
+  }
+}
+
+Future<void> basicStatusCheck(StoreVersion newVersion, BuildContext context) async {
+  await newVersion.showAlertIfNecessary(context: context);
+}
+
+Future<void> advancedStatusCheck(StoreVersion newVersion, BuildContext context) async {
+  final status = await newVersion.getVersionStatus();
+  if (status != null) {
+    debugPrint(status.releaseNotes);
+    debugPrint(status.appStoreLink);
+    debugPrint(status.localVersion);
+    debugPrint(status.storeVersion);
+    debugPrint(status.canUpdate.toString());
+    if(status.canUpdate) {
+      newVersion.showUpdateDialog(
+        context: context,
+        versionStatus: status,
+        dialogTitle: 'Custom Title',
+        dialogText: 'Custom Text',
+      );
+    }
   }
 }
