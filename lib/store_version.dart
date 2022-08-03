@@ -1,4 +1,4 @@
-library new_version;
+library store_version;
 
 import 'dart:async';
 import 'dart:convert';
@@ -10,56 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:store_version/version_status.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
-/// Information about the app's current version, and the most recent version
-/// available in the Apple App Store or Google Play Store.
-class VersionStatus {
-  /// The current version of the app.
-  final String localVersion;
-
-  /// The most recent version of the app in the store.
-  final String storeVersion;
-
-  /// A link to the app store page where the app can be updated.
-  final String appStoreLink;
-
-  /// The release notes for the store version of the app.
-  final String? releaseNotes;
-
-  /// Returns `true` if the store version of the application is greater than the local version.
-  bool get canUpdate {
-    final local = localVersion.split('.').map(int.parse).toList();
-    final store = storeVersion.split('.').map(int.parse).toList();
-
-    // Each consecutive field in the version notation is less significant than the previous one,
-    // therefore only one comparison needs to yield `true` for it to be determined that the store
-    // version is greater than the local version.
-    for (var i = 0; i < store.length; i++) {
-      // The store version field is newer than the local version.
-      if (store[i] > local[i]) {
-        return true;
-      }
-
-      // The local version field is newer than the store version.
-      if (local[i] > store[i]) {
-        return false;
-      }
-    }
-
-    // The local and store versions are the same.
-    return false;
-  }
-
-  VersionStatus._({
-    required this.localVersion,
-    required this.storeVersion,
-    required this.appStoreLink,
-    this.releaseNotes,
-  });
-}
-
-class NewVersion {
+class StoreVersion {
   /// An optional value that can override the default packageName when
   /// attempting to reach the Apple App Store. This is useful if your app has
   /// a different package name in the App Store.
@@ -81,7 +35,7 @@ class NewVersion {
   /// before publishng a new version.
   final String? forceAppVersion;
 
-  NewVersion({
+  StoreVersion({
     this.androidId,
     this.iOSId,
     this.iOSAppStoreCountry,
@@ -109,6 +63,7 @@ class NewVersion {
     } else {
       debugPrint(
           'The target platform "${Platform.operatingSystem}" is not yet supported by this package.');
+      return null;
     }
   }
 
@@ -137,7 +92,7 @@ class NewVersion {
       debugPrint('Can\'t find an app in the App Store with the id: $id');
       return null;
     }
-    return VersionStatus._(
+    return VersionStatus(
       localVersion: _getCleanVersion(packageInfo.version),
       storeVersion:
           _getCleanVersion(forceAppVersion ?? jsonObj['results'][0]['version']),
@@ -196,7 +151,7 @@ class NewVersion {
       releaseNotes = data[1][2][144][1][1];
     }
 
-    return VersionStatus._(
+    return VersionStatus(
       localVersion: _getCleanVersion(packageInfo.version),
       storeVersion: _getCleanVersion(forceAppVersion ?? storeVersion),
       appStoreLink: uri.toString(),
@@ -286,8 +241,8 @@ class NewVersion {
   /// Launches the Apple App Store or Google Play Store page for the app.
   Future<void> launchAppStore(String appStoreLink) async {
     debugPrint(appStoreLink);
-    if (await canLaunch(appStoreLink)) {
-      await launch(appStoreLink);
+    if (await canLaunchUrlString(appStoreLink)) {
+      await launchUrlString(appStoreLink);
     } else {
       throw 'Could not launch appStoreLink';
     }

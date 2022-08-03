@@ -11,8 +11,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  new_version:
-    path: ../../new_version
+  store_version:
+    path: ../../store_version
 
 flutter:
   uses-material-design: true

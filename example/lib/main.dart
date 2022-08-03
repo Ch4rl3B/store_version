@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:new_version/new_version.dart';
+import 'package:store_version/store_version.dart';
 
 void main() {
   runApp(MyApp());
@@ -25,7 +25,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
 
     // Instantiate NewVersion manager object (Using GCP Console app as example)
-    final newVersion = NewVersion(
+    final newVersion = StoreVersion(
       iOSId: 'com.google.Vespa',
       androidId: 'com.google.android.apps.cloudconsole',
     );
@@ -41,11 +41,11 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  basicStatusCheck(NewVersion newVersion) {
+  basicStatusCheck(StoreVersion newVersion) {
     newVersion.showAlertIfNecessary(context: context);
   }
 
-  advancedStatusCheck(NewVersion newVersion) async {
+  advancedStatusCheck(StoreVersion newVersion) async {
     final status = await newVersion.getVersionStatus();
     if (status != null) {
       debugPrint(status.releaseNotes);
