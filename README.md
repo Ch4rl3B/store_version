@@ -1,21 +1,21 @@
-### Archive Notice
-This plugin is relatively stable and feature-complete, but I won't be working on it or accepting pull requests going forward. If anyone is interested in taking over as maintainer, feel free to email me. I'm also happy to link to popular forks that have spun off. Thanks.
+### Fork Info:
+[![NEWVERSION](https://img.shields.io/badge/Fork-new__version-blue?style=for-the-badge&logo=flutter)](https://pub.dev/packages/new_version)
 
-# New Version Plugin 🎉
+# Store Version Plugin 🎉
 
 A Flutter plugin that makes it possible to: 
 * Check if a user has the most recent version of your app installed.
 * Show the user an alert with a link to the appropriate app store page.
 
-See more at the [Dart Packages page.](https://pub.dartlang.org/packages/new_version)
+See more at the [Dart Packages page.](https://pub.dartlang.org/packages/store_version)
 
 ![Screenshots](screenshots/both.png)
 
 ## Installation
-Add new_version as [a dependency in your `pubspec.yaml` file.](https://flutter.io/using-packages/)
+Add store_version as [a dependency in your `pubspec.yaml` file.](https://flutter.io/using-packages/)
 ```
 dependencies:
-  new_version: ^0.3.0
+  store_version: ^0.3.0
 ```
 
 ## Usage
